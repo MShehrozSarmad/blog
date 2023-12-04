@@ -13,7 +13,11 @@ export class DbService{
     }
 
     async createPost({title, slug, content, featuredImage, status, userId}){
-        
+        try {
+            
+        } catch (error) {
+            
+        }
     }
     
 }
