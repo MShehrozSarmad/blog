@@ -1,8 +1,24 @@
-import React from 'react'
+// import React from 'react'
 
-const Footer = () => {
+// const Footer = () => {
+//   return (
+//     <div>Footer</div>
+//   )
+// }
+
+// export default Footer
+
+import React from 'react'
+import { Link } from 'react-router-dom'
+import {Logo} from '../index'
+
+function Footer() {
   return (
-    <div>Footer</div>
+    <section className="relative overflow-hidden py-10 bg-gray-400 border border-t-2 border-t-black">
+            <div className="relative z-10 mx-auto max-w-7xl px-4">
+                Footer
+            </div>
+        </section>
   )
 }
 
