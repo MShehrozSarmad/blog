@@ -15,9 +15,9 @@ const Login = () => {
 	const login = async (data) => {
 		setError("");
 		try {
-			const session = authService.loginAccount(data);
+			const session = await authService.loginAccount(data);
 			if (session) {
-				const userData = authService.getCurrentUser();
+				const userData = await authService.getCurrentUser();
 				userData ? dispatch(authLogin(userData)) : null;
 				navigate("/");
 			}
