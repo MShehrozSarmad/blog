@@ -12,8 +12,15 @@ export class DbService {
         this.bucket = new Storage(this.client);
     }
 
-    async createPost({ title, slug, content, featuredImage, status, userId }) {
+    async createPost({ title, slug, content, featuredImg, status, userId }) {
+    // async createPost({ title, slug, content, featuredImage, status, userId }) {
         try {
+
+            slug = slug.substring(0, 36).replace(/[^a-zA-Z0-9._-]/g, '');
+            if (!/^[a-zA-Z0-9]/.test(slug)) {
+                slug = 'a' + slug.substring(1);
+            }
+
             return await this.databases.createDocument(
                 conf.appwriteDatabaseId,
                 conf.appwriteCollectionId,
@@ -21,7 +28,8 @@ export class DbService {
                 {
                     title,
                     content,
-                    featuredImage,
+                    featuredImg: featuredImg, 
+                    // featuredImg: featuredImage, 
                     status,
                     userId
                 }
@@ -31,7 +39,8 @@ export class DbService {
         }
     }
 
-    async updatePost(slug, { title, content, featuredImage, status }) {
+    async updatePost(slug, { title, content, featuredImg, status }) {
+    // async updatePost(slug, { title, content, featuredImage, status }) {
         try {
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId,
@@ -40,7 +49,8 @@ export class DbService {
                 {
                     title,
                     content,
-                    featuredImage,
+                    featuredImg,
+                    // featuredImage,
                     status
                 }
             )
@@ -85,6 +95,8 @@ export class DbService {
             )
         } catch (error) {
             console.log('get posts :: appwrite service :: error : ', error);
+            return false;
+
         }
     }
     
@@ -115,7 +127,7 @@ export class DbService {
     }
 
     previewFile(fileId){
-        this.bucket.getFilePreview(
+        return this.bucket.getFilePreview(
             conf.appwriteBucketId,
             fileId
         )

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { RTE, Button, Select, Input } from "../index";
 import dbService from "../../appwrite/config";
@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
 
 const PostForm = ({ post }) => {
+	const [contentLoading, setContentLoading] = useState(true);
+
 	const { register, handleSubmit, watch, setValue, control, getValues } =
 		useForm({
 			defaultValues: {
@@ -16,19 +18,60 @@ const PostForm = ({ post }) => {
 			},
 		});
 
+	useEffect(() => {
+		if (post) {
+			setValue("title", post.title);
+			setValue("content", post.content);
+			setValue("status", post.status);
+			post.content && post.featuredImg
+				? setContentLoading(false)
+				: setContentLoading(true);
+			console.log(post);
+		} else {
+			setContentLoading(false);
+		}
+		console.log("---------------------------------------");
+		console.log("ye chx => post, loading", post, contentLoading);
+		console.log("ye chx2 => post && loading = ", post && contentLoading);
+		console.log("---------------------------------------");
+	}, [post, setValue]);
+
 	const navigate = useNavigate();
-	const userData = useSelector((state) => state.user.userData);
+	const userData = useSelector((state) => state.auth.userData);
+	// console.log("post here =>", post.featuredImg);
+
+	// const submit = async (data) => {
+	// 	console.log("submitted");
+	// 	if (post) {
+	// 		const file = await data.image[0]
+	// 			? dbService.uploadFile(data.image[0])
+	// 			: null;
+	// 		file ? console.log('success ',await file, file.$id) : console.log('failed ', file)
+	// 		file ? dbService.delFile(post.featuredImg) : null;
+	// 		// COMPLETED: edit krne pe featured image upload ni hti
+	// 		const dbPost = await dbService.updatePost(post.$id, {
+	// 			...data,
+	// 			featuredImg: await file ? file.$id : 'fdata',
+	// 		});
+
 
 	const submit = async (data) => {
+		console.log("submitted");
 		if (post) {
-			const file = data.image[0]
-				? dbService.uploadFile(data.image[0])
-				: null;
-			file ? dbService.delFile(post.image) : null;
+			let file = null;
+			if (data.image[0]) {
+				file = await dbService.uploadFile(data.image[0]); // await the file upload
+				if (file) {
+					console.log("success ", file, file.$id); // check if file is defined before accessing file.$id
+					dbService.delFile(post.featuredImg);
+				} else {
+					console.log("failed ", file);
+				}
+			}
 
 			const dbPost = await dbService.updatePost(post.$id, {
 				...data,
-				featuredImage: file ? file.$id : undefined,
+				featuredImg: file ? file.$id : "fdata", // use the uploaded file's id
 			});
 
 			dbPost ? navigate(`/post/${dbPost.$id}`) : null;
@@ -37,12 +80,14 @@ const PostForm = ({ post }) => {
 
 			if (file) {
 				const fileId = file.$id;
-				data.featuredImage = fileId;
+				data.featuredImg = fileId;
 				const dbPost = await dbService.createPost({
 					...data,
 					userId: userData.$id,
 				});
 				dbPost ? navigate(`/post/${dbPost}`) : null;
+			} else {
+				console.log("file is not uploaded");
 			}
 		}
 	};
@@ -91,13 +136,25 @@ const PostForm = ({ post }) => {
 							shouldValidate: true,
 						});
 					}}
+					disabled={post}
 				/>
-				<RTE
+				{/* <RTE
 					label="Content :"
 					name="content"
 					control={control}
 					defaultValue={getValues("content")}
-				/>
+				/> */}
+
+				{contentLoading ? (
+					<p>Loading content...</p>
+				) : (
+					<RTE
+						label="Content :"
+						name="content"
+						control={control}
+						defaultValue={getValues("content")}
+					/>
+				)}
 			</div>
 			<div className="w-1/3 px-2">
 				<Input
@@ -107,17 +164,23 @@ const PostForm = ({ post }) => {
 					accept="image/png, image/jpg, image/jpeg, image/gif"
 					{...register("image", { required: !post })}
 				/>
-				{post && (
-					<div className="w-full mb-4">
-						<img
-							src={appwriteService.getFilePreview(
-								post.featuredImage
-							)}
-							alt={post.title}
-							className="rounded-lg"
-						/>
-					</div>
-				)}
+
+				{post ? (
+					contentLoading ? (
+						<p>content is loading...</p>
+					) : (
+						<div className="w-full mb-4">
+							<img
+								src={dbService.previewFile(
+									post.featuredImg || '"657b1a633744df1ad97b"'
+								)}
+								alt={post.title}
+								className="rounded-lg"
+							/>
+						</div>
+					)
+				) : null}
+
 				<Select
 					options={["active", "inactive"]}
 					label="Status"
@@ -128,6 +191,7 @@ const PostForm = ({ post }) => {
 					type="submit"
 					bgColor={post ? "bg-green-500" : undefined}
 					className="w-full"
+					onClick={() => console.log("clicked...")}
 				>
 					{post ? "Update" : "Submit"}
 				</Button>

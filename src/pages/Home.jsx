@@ -1,15 +1,37 @@
-import React, { useState, useEffect } from "react";
+// import React, { useState, useEffect } from "react";
+// import dbService from "../appwrite/config";
+// import { Container, PostCard } from "../components/index";
+
+// const Home = () => {
+// 	const [posts, setposts] = useState([]);
+
+// 	useEffect(() => {
+// 		dbService.getPosts().then((possts) => {
+// 			possts ? setposts(possts.documents) : null;
+// 		});
+// 	}, []);
+
+import React, { useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import dbService from "../appwrite/config";
 import { Container, PostCard } from "../components/index";
-
+import { setPosts as stPstsSlc, clearPosts } from "../store/postSlice";
 const Home = () => {
-	const [posts, setposts] = useState([]);
+	const posts = useSelector((state) => state.postSlc); // access the posts state
+	const authStatus = useSelector((state) => state.auth.status);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
-		dbService.getPosts().then((possts) => {
-			possts ? setposts(possts.documents.documents) : null;
-		});
-	}, []);
+		if (authStatus) {
+			dbService.getPosts().then((possts) => {
+				possts
+					? dispatch(stPstsSlc(possts.documents))
+					: dispatch(clearPosts());
+			});
+		} else {
+			dispatch(clearPosts()); // clear posts when not authenticated
+		}
+	}, [authStatus, dispatch]);
 
 	if (posts.length === 0) {
 		return (
@@ -34,7 +56,6 @@ const Home = () => {
 					{posts.map((post) => (
 						<div key={post.$id} className="p-2 w-1/4">
 							<PostCard {...post} />
-							{/* <PostCard post={posts} /> */}
 						</div>
 					))}
 				</div>
