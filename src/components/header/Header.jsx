@@ -21,7 +21,7 @@ const Header = () => {
 		},
 		{
 			name: "Signup",
-			slug: "/",
+			slug: "/signup",
 			active: !authStatus,
 		},
 		{
