@@ -84,11 +84,13 @@ const PostForm = ({ post }) => {
 				const dbPost = await dbService.createPost({
 					...data,
 					userId: userData.$id,
+					author: userData.name
 				});
 				dbPost ? navigate(`/post/${dbPost}`) : null;
 			} else {
 				console.log("file is not uploaded");
 			}
+			console.log("yes submitted");
 		}
 	};
 

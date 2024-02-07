@@ -12,10 +12,9 @@ export class DbService {
         this.bucket = new Storage(this.client);
     }
 
-    async createPost({ title, slug, content, featuredImg, status, userId }) {
-    // async createPost({ title, slug, content, featuredImage, status, userId }) {
+    async createPost({ title, slug, content, featuredImg, status, userId, author }) {
+        // async createPost({ title, slug, content, featuredImage, status, userId }) {
         try {
-
             slug = slug.substring(0, 36).replace(/[^a-zA-Z0-9._-]/g, '');
             if (!/^[a-zA-Z0-9]/.test(slug)) {
                 slug = 'a' + slug.substring(1);
@@ -28,10 +27,10 @@ export class DbService {
                 {
                     title,
                     content,
-                    featuredImg: featuredImg, 
-                    // featuredImg: featuredImage, 
+                    featuredImg: featuredImg,
                     status,
-                    userId
+                    userId,
+                    author
                 }
             )
         } catch (error) {
@@ -40,7 +39,7 @@ export class DbService {
     }
 
     async updatePost(slug, { title, content, featuredImg, status }) {
-    // async updatePost(slug, { title, content, featuredImage, status }) {
+        // async updatePost(slug, { title, content, featuredImage, status }) {
         try {
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId,
@@ -72,8 +71,8 @@ export class DbService {
             return false;
         }
     }
-    
-    async getPost(slug){
+
+    async getPost(slug) {
         try {
             return await this.databases.getDocument(
                 conf.appwriteDatabaseId,
@@ -86,7 +85,7 @@ export class DbService {
         }
     }
 
-    async getPosts(queries = [Query.equal('status', 'active')]){
+    async getPosts(queries = [Query.equal('status', 'active')]) {
         try {
             return await this.databases.listDocuments(
                 conf.appwriteDatabaseId,
@@ -99,8 +98,8 @@ export class DbService {
 
         }
     }
-    
-    async uploadFile(file){
+
+    async uploadFile(file) {
         try {
             return await this.bucket.createFile(
                 conf.appwriteBucketId,
@@ -113,7 +112,7 @@ export class DbService {
         }
     }
 
-    async delFile(fileId){
+    async delFile(fileId) {
         try {
             await this.bucket.deleteFile(
                 conf.appwriteBucketId,
@@ -126,7 +125,7 @@ export class DbService {
         }
     }
 
-    previewFile(fileId){
+    previewFile(fileId) {
         return this.bucket.getFilePreview(
             conf.appwriteBucketId,
             fileId

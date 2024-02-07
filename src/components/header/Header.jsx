@@ -7,6 +7,7 @@ import { useNavigate } from "react-router-dom";
 const Header = () => {
 	const authStatus = useSelector((state) => state.auth.status);
 	const navigate = useNavigate();
+	const userData = useSelector((state) => state.auth.userData);
 	const navItems = [
 		{
 			name: "Home",
@@ -20,7 +21,7 @@ const Header = () => {
 		},
 		{
 			name: "Signup",
-			slug: "/signup",
+			slug: "/",
 			active: !authStatus,
 		},
 		{
@@ -32,11 +33,11 @@ const Header = () => {
 			name: "Add Post",
 			slug: "/add-post",
 			active: authStatus,
-		},
+		}
 	];
 
 	return (
-		<header className="py-3 shadow bg-gray-500  ">
+		<header className="py-3 shadow bg-gray-900 text-white">
 			<Container>
 				<nav className="flex">
 					<div className="mr-4">
@@ -51,7 +52,7 @@ const Header = () => {
 									{" "}
 									<button
 										onClick={() => navigate(item.slug)}
-										className="inline-bock px-6 py-2 duration-200 hover:bg-blue-100 rounded-full"
+										className="inline-bock px-6 py-2 duration-200 hover:bg-blue-100 hover:text-gray-900 rounded-full"
 									>
 										{" "}
 										{item.name}{" "}
@@ -62,6 +63,9 @@ const Header = () => {
 						{authStatus && (
 							<li>
 								<LogoutBtn />
+								<span style={{color: "white"}}>
+									{userData?.name}
+								</span>
 							</li>
 						)}
 					</ul>

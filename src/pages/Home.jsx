@@ -1,16 +1,3 @@
-// import React, { useState, useEffect } from "react";
-// import dbService from "../appwrite/config";
-// import { Container, PostCard } from "../components/index";
-
-// const Home = () => {
-// 	const [posts, setposts] = useState([]);
-
-// 	useEffect(() => {
-// 		dbService.getPosts().then((possts) => {
-// 			possts ? setposts(possts.documents) : null;
-// 		});
-// 	}, []);
-
 import React, { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import dbService from "../appwrite/config";
