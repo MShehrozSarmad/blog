@@ -13,7 +13,6 @@ export class DbService {
     }
 
     async createPost({ title, slug, content, featuredImg, status, userId, author }) {
-        // async createPost({ title, slug, content, featuredImage, status, userId }) {
         try {
             slug = slug.substring(0, 36).replace(/[^a-zA-Z0-9._-]/g, '');
             if (!/^[a-zA-Z0-9]/.test(slug)) {
@@ -39,7 +38,6 @@ export class DbService {
     }
 
     async updatePost(slug, { title, content, featuredImg, status }) {
-        // async updatePost(slug, { title, content, featuredImage, status }) {
         try {
             return await this.databases.updateDocument(
                 conf.appwriteDatabaseId,
@@ -49,7 +47,6 @@ export class DbService {
                     title,
                     content,
                     featuredImg,
-                    // featuredImage,
                     status
                 }
             )

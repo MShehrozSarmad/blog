@@ -30,30 +30,14 @@ const PostForm = ({ post }) => {
 		} else {
 			setContentLoading(false);
 		}
-		console.log("---------------------------------------");
-		console.log("ye chx => post, loading", post, contentLoading);
-		console.log("ye chx2 => post && loading = ", post && contentLoading);
-		console.log("---------------------------------------");
+		// console.log("---------------------------------------");
+		// console.log("ye chx => post, loading", post, contentLoading);
+		// console.log("ye chx2 => post && loading = ", post && contentLoading);
+		// console.log("---------------------------------------");
 	}, [post, setValue]);
 
 	const navigate = useNavigate();
 	const userData = useSelector((state) => state.auth.userData);
-	// console.log("post here =>", post.featuredImg);
-
-	// const submit = async (data) => {
-	// 	console.log("submitted");
-	// 	if (post) {
-	// 		const file = await data.image[0]
-	// 			? dbService.uploadFile(data.image[0])
-	// 			: null;
-	// 		file ? console.log('success ',await file, file.$id) : console.log('failed ', file)
-	// 		file ? dbService.delFile(post.featuredImg) : null;
-	// 		// COMPLETED: edit krne pe featured image upload ni hti
-	// 		const dbPost = await dbService.updatePost(post.$id, {
-	// 			...data,
-	// 			featuredImg: await file ? file.$id : 'fdata',
-	// 		});
-
 
 	const submit = async (data) => {
 		console.log("submitted");
@@ -84,7 +68,7 @@ const PostForm = ({ post }) => {
 				const dbPost = await dbService.createPost({
 					...data,
 					userId: userData.$id,
-					author: userData.name
+					author: userData.name,
 				});
 				dbPost ? navigate(`/post/${dbPost}`) : null;
 			} else {
@@ -140,13 +124,6 @@ const PostForm = ({ post }) => {
 					}}
 					disabled={post}
 				/>
-				{/* <RTE
-					label="Content :"
-					name="content"
-					control={control}
-					defaultValue={getValues("content")}
-				/> */}
-
 				{contentLoading ? (
 					<p>Loading content...</p>
 				) : (
